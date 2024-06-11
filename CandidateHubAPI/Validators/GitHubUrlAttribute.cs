@@ -1,5 +1,8 @@
 ﻿namespace CandidateHubAPI.Validators
 {
+    /// <summary>
+    /// Validates that the GitHub URL is valid.
+    /// </summary>
     public class GitHubUrlAttribute : ValidationAttribute
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
@@ -13,4 +16,5 @@
             return ValidationResult.Success;
         }
     }
+
 }

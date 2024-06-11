@@ -1,5 +1,8 @@
 ﻿namespace CandidateHubAPI.Validators
 {
+    /// <summary>
+    /// Validates that the end date is greater than the start date.
+    /// </summary>
     public class DateRangeAttribute : ValidationAttribute
     {
         public string StartDatePropertyName { get; }

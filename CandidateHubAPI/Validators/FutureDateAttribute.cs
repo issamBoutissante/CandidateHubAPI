@@ -1,5 +1,8 @@
 ﻿namespace CandidateHubAPI.Validators
 {
+    /// <summary>
+    /// Validates that the date is in the future.
+    /// </summary>
     public class FutureDateAttribute : ValidationAttribute
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
@@ -16,4 +19,5 @@
             return ValidationResult.Success;
         }
     }
+
 }

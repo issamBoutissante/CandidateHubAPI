@@ -1,4 +1,14 @@
-﻿namespace CandidateHubAPI.Tests
+﻿using Moq;
+using Xunit;
+using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using CandidateHubAPI.Controllers;
+using CandidateHubAPI.Services;
+using CandidateHubAPI.Dtos;
+using CandidateHubAPI.Models;
+
+namespace CandidateHubAPI.Tests
 {
     public class CandidatesControllerTests : TestBase
     {
@@ -9,7 +19,7 @@
             : base()
         {
             _mockService = new Mock<ICandidateService>();
-            _controller = new CandidatesController(_mockService.Object, Mapper);
+            _controller = new CandidatesController(_mockService.Object);
         }
 
         /// <summary>
@@ -29,12 +39,24 @@
                 Comment = "Hi I'm a full stack .net developer and currently I'm creating the software for applying in Sigma Company!"
             };
 
-            _mockService.Setup(service => service.AddOrUpdateCandidateAsync(It.IsAny<Candidate>()))
-                        .Returns(Task.CompletedTask);
+            var candidate = new Candidate
+            {
+                FirstName = "Issam",
+                LastName = "Boutissante",
+                PhoneNumber = "1234567890",
+                Email = "boutissante.issam.dev@gmail.com",
+                LinkedInProfileUrl = "https://www.linkedin.com/in/issam-boutissante-1194a1205/",
+                GitHubProfileUrl = "https://github.com/issamBoutissante",
+                Comment = "Hi I'm a full stack .net developer and currently I'm creating the software for applying in Sigma Company!"
+            };
+
+            _mockService.Setup(service => service.AddOrUpdateCandidateAsync(It.IsAny<CandidateDto>()))
+                        .ReturnsAsync(candidate);
 
             var result = await _controller.AddOrUpdateCandidate(candidateDto);
 
-            var okResult = Assert.IsType<OkObjectResult>(result);
+            var okResult = result.Result as OkObjectResult;
+            Assert.NotNull(okResult);
             var returnValue = Assert.IsType<Candidate>(okResult.Value);
             Assert.Equal("Issam", returnValue.FirstName);
             Assert.Equal("Boutissante", returnValue.LastName);
@@ -42,25 +64,69 @@
         }
 
         /// <summary>
-        /// Tests that the GetAllCandidates method returns an OK result with a list of candidates.
+        /// Tests that a valid existing candidate model returns an OK result.
+        /// </summary>
+        [Fact]
+        public async Task AddOrUpdateCandidate_ShouldReturnOk_WhenExisting()
+        {
+            var candidateDto = new CandidateDto
+            {
+                FirstName = "Issam",
+                LastName = "Boutissante",
+                PhoneNumber = "1234567890",
+                Email = "boutissante.issam.dev@gmail.com",
+                LinkedInProfileUrl = "https://www.linkedin.com/in/issam-boutissante-1194a1205/",
+                GitHubProfileUrl = "https://github.com/issamBoutissante",
+                Comment = "Hi I'm a full stack .net developer and currently I'm creating the software for applying in Sigma Company!"
+            };
+
+            var existingCandidate = new Candidate
+            {
+                FirstName = "Issam",
+                LastName = "Boutissante",
+                PhoneNumber = "1234567890",
+                Email = "boutissante.issam.dev@gmail.com",
+                LinkedInProfileUrl = "https://www.linkedin.com/in/issam-boutissante-1194a1205/",
+                GitHubProfileUrl = "https://github.com/issamBoutissante",
+                Comment = "Hi I'm a full stack .net developer and currently I'm creating the software for applying in Sigma Company!"
+            };
+
+            _mockService.Setup(service => service.GetCandidateByEmailAsync(It.IsAny<string>()))
+                        .ReturnsAsync(existingCandidate);
+
+            _mockService.Setup(service => service.AddOrUpdateCandidateAsync(It.IsAny<CandidateDto>()))
+                        .ReturnsAsync(existingCandidate);
+
+            var result = await _controller.AddOrUpdateCandidate(candidateDto);
+
+            var okResult = result.Result as OkObjectResult;
+            Assert.NotNull(okResult);
+            var returnValue = Assert.IsType<Candidate>(okResult.Value);
+            Assert.Equal("Issam", returnValue.FirstName);
+            Assert.Equal("Boutissante", returnValue.LastName);
+            Assert.Equal("boutissante.issam.dev@gmail.com", returnValue.Email);
+        }
+
+        /// <summary>
+        /// Tests that the GetAllCandidates method returns an OK result with a list of candidate DTOs.
         /// </summary>
         [Fact]
         public async Task GetAllCandidates_ShouldReturnOk_WithListOfCandidates()
         {
-            var candidates = new List<Candidate>
+            var candidateDtos = new List<CandidateDto>
             {
-                new Candidate { FirstName = "Issam", LastName = "Boutissante", Email = "boutissante.issam.dev@gmail.com" },
-                new Candidate { FirstName = "Salama", LastName = "Daali", Email = "salama.daali@gmail.com" }
+                new CandidateDto { FirstName = "Issam", LastName = "Boutissante", Email = "boutissante.issam.dev@gmail.com", PhoneNumber = "1234567890" },
+                new CandidateDto { FirstName = "Salama", LastName = "Daali", Email = "salama.daali@gmail.com", PhoneNumber = "0987654321" }
             };
 
             _mockService.Setup(service => service.GetAllCandidatesAsync())
-                        .ReturnsAsync(candidates);
+                        .ReturnsAsync(candidateDtos);
 
             var result = await _controller.GetAllCandidates();
 
-            var okResult = Assert.IsType<ActionResult<List<Candidate>>>(result);
-            var returnValue = Assert.IsType<OkObjectResult>(okResult.Result);
-            var candidatesList = Assert.IsType<List<Candidate>>(returnValue.Value);
+            var okResult = result.Result as OkObjectResult;
+            Assert.NotNull(okResult);
+            var candidatesList = Assert.IsType<List<CandidateDto>>(okResult.Value);
             Assert.Equal(2, candidatesList.Count);
         }
     }

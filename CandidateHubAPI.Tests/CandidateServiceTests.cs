@@ -18,7 +18,7 @@
         {
             ClearDatabase();
 
-            var candidate = new Candidate
+            var candidateDto = new CandidateDto
             {
                 FirstName = "Issam",
                 LastName = "Boutissante",
@@ -29,12 +29,13 @@
                 Comment = "Hi I'm a full stack .net developer and currently I'm creating the software for applying in Sigma Company!"
             };
 
-            await _candidateService.AddOrUpdateCandidateAsync(candidate);
+            var createdCandidateDto = await _candidateService.AddOrUpdateCandidateAsync(candidateDto);
 
-            var savedCandidate = await _candidateService.GetCandidateByEmailAsync(candidate.Email);
+            var savedCandidate = await _candidateService.GetCandidateByEmailAsync(candidateDto.Email);
 
             Assert.NotNull(savedCandidate);
             Assert.Equal("Issam", savedCandidate.FirstName);
+            Assert.Equal("Boutissante", savedCandidate.LastName);
         }
 
         /// <summary>
@@ -45,7 +46,7 @@
         {
             ClearDatabase();
 
-            var candidate = new Candidate
+            var candidateDto = new CandidateDto
             {
                 FirstName = "Issam",
                 LastName = "Boutissante",
@@ -56,13 +57,13 @@
                 Comment = "Hi I'm a full stack .net developer and currently I'm creating the software for applying in Sigma Company!"
             };
 
-            await _candidateService.AddOrUpdateCandidateAsync(candidate);
+            var createdCandidateDto = await _candidateService.AddOrUpdateCandidateAsync(candidateDto);
 
-            candidate.LastName = "Daali";
+            candidateDto.LastName = "Daali";
 
-            await _candidateService.AddOrUpdateCandidateAsync(candidate);
+            var updatedCandidateDto = await _candidateService.AddOrUpdateCandidateAsync(candidateDto);
 
-            var savedCandidate = await _candidateService.GetCandidateByEmailAsync(candidate.Email);
+            var savedCandidate = await _candidateService.GetCandidateByEmailAsync(candidateDto.Email);
 
             Assert.NotNull(savedCandidate);
             Assert.Equal("Daali", savedCandidate.LastName);
@@ -76,10 +77,10 @@
         {
             ClearDatabase();
 
-            var candidates = new List<Candidate>
+            var candidates = new List<CandidateDto>
             {
-                new Candidate { FirstName = "Issam", LastName = "Boutissante", Email = "boutissante.issam.dev@gmail.com", PhoneNumber = "1234567890" },
-                new Candidate { FirstName = "Salama", LastName = "Daali", Email = "salama.daali@gmail.com", PhoneNumber = "0987654321" }
+                new CandidateDto { FirstName = "Issam", LastName = "Boutissante", Email = "boutissante.issam.dev@gmail.com", PhoneNumber = "1234567890" },
+                new CandidateDto { FirstName = "Salama", LastName = "Daali", Email = "salama.daali@gmail.com", PhoneNumber = "0987654321" }
             };
 
             await _candidateService.AddOrUpdateCandidateAsync(candidates[0]);

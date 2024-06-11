@@ -1,5 +1,8 @@
 ﻿namespace CandidateHubAPI.Validators
 {
+    /// <summary>
+    /// Validates that the LinkedIn URL is valid.
+    /// </summary>
     public class LinkedInUrlAttribute : ValidationAttribute
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
