@@ -1,6 +1,4 @@
-﻿using CandidateHubAPI.Validators;
-
-namespace CandidateHubAPI.Dtos
+﻿namespace CandidateHubAPI.Dtos
 {
     public class CandidateDto
     {

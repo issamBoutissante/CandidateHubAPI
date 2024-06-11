@@ -1,4 +1,5 @@
 using CandidateHubAPI.Data;
+using CandidateHubAPI.Mappings;
 using CandidateHubAPI.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +16,8 @@ builder.Services.AddDbContext<CandidateDbContext>(options =>
 
 // Register the CandidateService
 builder.Services.AddScoped<ICandidateService, CandidateService>();
+// Register AutoMapper
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

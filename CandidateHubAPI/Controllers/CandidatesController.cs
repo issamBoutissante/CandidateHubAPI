@@ -1,22 +1,19 @@
-﻿using CandidateHubAPI.Dtos;
-using CandidateHubAPI.Models;
-using CandidateHubAPI.Services;
-using Microsoft.AspNetCore.Mvc;
-
-namespace CandidateHubAPI.Controllers
+﻿namespace CandidateHubAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
     public class CandidatesController : ControllerBase
     {
         private readonly ICandidateService _candidateService;
+        private readonly IMapper _mapper;
 
-        public CandidatesController(ICandidateService candidateService)
+        public CandidatesController(ICandidateService candidateService, IMapper mapper)
         {
             _candidateService = candidateService;
+            _mapper = mapper;
         }
 
-        [HttpPost("addOrUpdate")]
+        [HttpPost(nameof(AddOrUpdateCandidate))]
         public async Task<IActionResult> AddOrUpdateCandidate(CandidateDto candidateDto)
         {
             if (!ModelState.IsValid)
@@ -24,25 +21,14 @@ namespace CandidateHubAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-            var candidate = new Candidate
-            {
-                FirstName = candidateDto.FirstName,
-                LastName = candidateDto.LastName,
-                PhoneNumber = candidateDto.PhoneNumber,
-                Email = candidateDto.Email,
-                CallTimeIntervalStart = candidateDto.CallTimeIntervalStart,
-                CallTimeIntervalEnd = candidateDto.CallTimeIntervalEnd,
-                LinkedInProfileUrl = candidateDto.LinkedInProfileUrl,
-                GitHubProfileUrl = candidateDto.GitHubProfileUrl,
-                Comment = candidateDto.Comment
-            };
+            var candidate = _mapper.Map<Candidate>(candidateDto);
 
             await _candidateService.AddOrUpdateCandidateAsync(candidate);
 
             return Ok(candidate);
         }
 
-        [HttpGet("all")]
+        [HttpGet(nameof(GetAllCandidates))]
         public async Task<ActionResult<List<Candidate>>> GetAllCandidates()
         {
             var candidates = await _candidateService.GetAllCandidatesAsync();
