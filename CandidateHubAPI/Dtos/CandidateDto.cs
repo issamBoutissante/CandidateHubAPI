@@ -16,6 +16,7 @@
         [EmailAddress]
         public string Email { get; set; }
 
+        [FutureDate]
         public DateTimeOffset? CallTimeIntervalStart { get; set; }
 
         [DateRange("CallTimeIntervalStart", ErrorMessage = "The end date must be greater than the start date.")]
