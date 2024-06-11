@@ -10,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
+builder.Services.AddMemoryCache(); // Add memory cache
 
 // Configure DbContext with SQLite
 var connectionString = "Data Source=candidatehub.db";

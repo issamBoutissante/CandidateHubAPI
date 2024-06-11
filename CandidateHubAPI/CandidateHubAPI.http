@@ -1,6 +1,22 @@
-@CandidateHubAPI_HostAddress = http://localhost:5093
+@CandidateHubAPI_HostAddress = https://localhost:7126
 
-GET {{CandidateHubAPI_HostAddress}}/weatherforecast/
-Accept: application/json
+POST {{CandidateHubAPI_HostAddress}}/api/candidates/AddOrUpdateCandidate
+Content-Type: application/json
+
+ {
+    "firstName": "Issam",
+    "lastName": "Boutissante",
+    "phoneNumber": "+212719143672",
+    "email": "boutissante.issam.dev@gmail.com",
+    "callTimeIntervalStart": "2024-11-11T16:14:15.581+00:00",
+    "callTimeIntervalEnd": "2024-12-11T16:14:15.581+00:00",
+    "linkedInProfileUrl": "https://www.linkedin.com/in/issam-boutissante-1194a1205/",
+    "gitHubProfileUrl": "https://github.com/issamBoutissante",
+    "comment": "Hi I'm a full stack .net developer and currently I'm creating the software for applying in Sigma Company!"
+  }
+
+###
+
+GET {{CandidateHubAPI_HostAddress}}/api/candidates/GetAllCandidates
 
 ###
