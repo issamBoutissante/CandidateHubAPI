@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-
-namespace CandidateHubAPI.Controllers
+﻿namespace CandidateHubAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

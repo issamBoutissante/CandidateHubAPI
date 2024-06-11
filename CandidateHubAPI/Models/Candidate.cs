@@ -1,9 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace CandidateHubAPI.Models
+﻿namespace CandidateHubAPI.Models
 {
     [Index(nameof(Email),IsUnique = true)]
     public class Candidate

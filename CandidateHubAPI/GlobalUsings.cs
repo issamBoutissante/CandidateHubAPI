@@ -10,5 +10,6 @@ global using Microsoft.AspNetCore.Mvc;
 global using CandidateHubAPI.Mappings;
 global using Microsoft.OpenApi.Models;
 global using Serilog;
+global using Microsoft.Extensions.Caching.Memory;
 global using System.IO;
 global using System.Reflection;

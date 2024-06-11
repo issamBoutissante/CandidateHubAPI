@@ -1,28 +1,14 @@
-﻿using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
-using Moq;
-using Xunit;
-
-namespace CandidateHubAPI.Tests
+﻿namespace CandidateHubAPI.Tests
 {
     public class CandidateServiceTests : TestBase
     {
         private readonly CandidateService _candidateService;
-        private readonly IMemoryCache _memoryCache;
-        private readonly ILogger<CandidateService> _logger;
 
         public CandidateServiceTests()
             : base()
         {
-            // Initialize IMemoryCache
-            _memoryCache = new MemoryCache(new MemoryCacheOptions());
-
-            // Initialize ILogger<CandidateService>
-            var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
-            _logger = loggerFactory.CreateLogger<CandidateService>();
-
             // Initialize CandidateService with the necessary dependencies
-            _candidateService = new CandidateService(DbContext, Mapper, _memoryCache, _logger);
+            _candidateService = new CandidateService(DbContext, Mapper, MemoryCache, LoggerFactory.CreateLogger<CandidateService>());
         }
 
         /// <summary>

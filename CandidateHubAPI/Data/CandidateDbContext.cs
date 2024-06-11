@@ -1,7 +1,4 @@
-﻿using CandidateHubAPI.Models;
-using Microsoft.EntityFrameworkCore;
-
-namespace CandidateHubAPI.Data
+﻿namespace CandidateHubAPI.Data
 {
     public class CandidateDbContext : DbContext
     {

@@ -1,7 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Caching.Memory;
-
-namespace CandidateHubAPI.Services
+﻿namespace CandidateHubAPI.Services
 {
     public class CandidateService : ICandidateService
     {

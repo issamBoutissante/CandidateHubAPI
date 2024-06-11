@@ -1,6 +1,4 @@
-﻿using CandidateHubAPI.Models;
-
-namespace CandidateHubAPI.Services
+﻿namespace CandidateHubAPI.Services
 {
     public interface ICandidateService
     {

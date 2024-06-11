@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CandidateHubAPI.Tests
+﻿namespace CandidateHubAPI.Tests
 {
     public abstract class TestBase : IDisposable
     {
         protected readonly CandidateDbContext DbContext;
         protected readonly IMapper Mapper;
+        protected readonly IMemoryCache MemoryCache;
+        protected readonly ILoggerFactory LoggerFactory;
 
         protected TestBase()
         {
@@ -21,6 +17,10 @@ namespace CandidateHubAPI.Tests
 
             var config = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>());
             Mapper = config.CreateMapper();
+
+            MemoryCache = new MemoryCache(new MemoryCacheOptions());
+
+            LoggerFactory = Microsoft.Extensions.Logging.LoggerFactory.Create(builder => builder.AddConsole());
         }
 
         protected void ClearDatabase()

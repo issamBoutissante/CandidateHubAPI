@@ -7,4 +7,6 @@ global using CandidateHubAPI.Services;
 global using Microsoft.EntityFrameworkCore;
 global using CandidateHubAPI.Controllers;
 global using Moq;
+global using Microsoft.Extensions.Logging;
 global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.Extensions.Caching.Memory;

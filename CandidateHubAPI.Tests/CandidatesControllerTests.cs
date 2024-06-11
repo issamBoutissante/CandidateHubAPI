@@ -1,25 +1,20 @@
-﻿using Moq;
-using Xunit;
-using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using CandidateHubAPI.Controllers;
-using CandidateHubAPI.Services;
-using CandidateHubAPI.Dtos;
-using CandidateHubAPI.Models;
-
-namespace CandidateHubAPI.Tests
+﻿namespace CandidateHubAPI.Tests
 {
     public class CandidatesControllerTests : TestBase
     {
         private readonly CandidatesController _controller;
         private readonly Mock<ICandidateService> _mockService;
+        private readonly ILogger<CandidatesController> _logger;
 
         public CandidatesControllerTests()
             : base()
         {
             _mockService = new Mock<ICandidateService>();
-            _controller = new CandidatesController(_mockService.Object);
+
+            // Initialize ILogger<CandidatesController>
+            _logger = LoggerFactory.CreateLogger<CandidatesController>();
+
+            _controller = new CandidatesController(_mockService.Object, _logger);
         }
 
         /// <summary>
