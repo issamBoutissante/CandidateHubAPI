@@ -56,7 +56,7 @@ CandidateHubAPI is an ASP.NET Core Web API project designed to manage candidate 
 - **Logging:** Used Serilog for logging. Logs are stored in a file within the project directory.
 - **Log File Location:** ![Log File](docsassets/log_file_location.png)
 
-### Step 10: Documentation and Assumptions
+### Step 10: Documentation
 
 - **Swagger:** Used Swagger for API documentation. Enabled XML documentation file generation.
 - **Testing Tools:** Used HTTP file for performance comparison and testing.
