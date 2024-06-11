@@ -7,3 +7,8 @@ global using CandidateHubAPI.Data;
 global using Microsoft.EntityFrameworkCore;
 global using CandidateHubAPI.Services;
 global using Microsoft.AspNetCore.Mvc;
+global using CandidateHubAPI.Mappings;
+global using Microsoft.OpenApi.Models;
+global using Serilog;
+global using System.IO;
+global using System.Reflection;

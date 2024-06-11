@@ -3,17 +3,25 @@ using CandidateHubAPI.Mappings;
 using CandidateHubAPI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using System.IO;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure Serilog
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddMemoryCache(); // Add memory cache
 
 // Configure DbContext with SQLite
-var connectionString = "Data Source=candidatehub.db";
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<CandidateDbContext>(options =>
     options.UseSqlite(connectionString));
 
@@ -45,6 +53,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Add Serilog request logging
+app.UseSerilogRequestLogging();
 
 app.UseAuthorization();
 

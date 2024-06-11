@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace CandidateHubAPI.Services
 {
@@ -7,6 +8,7 @@ namespace CandidateHubAPI.Services
         private readonly CandidateDbContext _context;
         private readonly IMapper _mapper;
         private readonly IMemoryCache _cache;
+        private readonly ILogger<CandidateService> _logger;
 
         private const string CandidatesCacheKey = "allCandidates";
         private const string CandidateCacheKeyPrefix = "candidate_";
@@ -17,11 +19,13 @@ namespace CandidateHubAPI.Services
         /// <param name="context">The database context.</param>
         /// <param name="mapper">The AutoMapper instance.</param>
         /// <param name="cache">The memory cache.</param>
-        public CandidateService(CandidateDbContext context, IMapper mapper, IMemoryCache cache)
+        /// <param name="logger">The logger instance.</param>
+        public CandidateService(CandidateDbContext context, IMapper mapper, IMemoryCache cache, ILogger<CandidateService> logger)
         {
             _context = context;
             _mapper = mapper;
             _cache = cache;
+            _logger = logger;
         }
 
         /// <summary>
@@ -34,10 +38,12 @@ namespace CandidateHubAPI.Services
             var cacheKey = $"{CandidateCacheKeyPrefix}{email}";
             if (!_cache.TryGetValue(cacheKey, out Candidate candidate))
             {
+                _logger.LogInformation("Cache miss for candidate with email: {Email}", email);
                 candidate = await _context.Candidates.FirstOrDefaultAsync(c => c.Email == email);
                 if (candidate != null)
                 {
                     _cache.Set(cacheKey, candidate, TimeSpan.FromMinutes(30));
+                    _logger.LogInformation("Candidate with email: {Email} cached", email);
                 }
             }
             return candidate;
@@ -50,27 +56,37 @@ namespace CandidateHubAPI.Services
         /// <returns>The added or updated candidate DTO.</returns>
         public async Task<Candidate> AddOrUpdateCandidateAsync(CandidateDto candidateDto)
         {
-            var candidate = await GetCandidateByEmailAsync(candidateDto.Email);
-            if (candidate == null)
+            try
             {
-                // Add new candidate if it does not exist
-                candidate = _mapper.Map<Candidate>(candidateDto);
-                await _context.Candidates.AddAsync(candidate);
+                var candidate = await GetCandidateByEmailAsync(candidateDto.Email);
+                if (candidate == null)
+                {
+                    // Add new candidate if it does not exist
+                    candidate = _mapper.Map<Candidate>(candidateDto);
+                    await _context.Candidates.AddAsync(candidate);
+                    _logger.LogInformation("Adding new candidate with email: {Email}", candidateDto.Email);
+                }
+                else
+                {
+                    // Update existing candidate
+                    _mapper.Map(candidateDto, candidate);
+                    _logger.LogInformation("Updating existing candidate with email: {Email}", candidateDto.Email);
+                }
+
+                // Save changes to the database
+                await _context.SaveChangesAsync();
+
+                // Invalidate cache
+                _cache.Remove(CandidatesCacheKey);
+                _cache.Remove($"{CandidateCacheKeyPrefix}{candidate.Email}");
+
+                return candidate;
             }
-            else
+            catch (Exception ex)
             {
-                // Update existing candidate
-                _mapper.Map(candidateDto, candidate);
+                _logger.LogError(ex, "An error occurred while adding or updating candidate with email: {Email}", candidateDto.Email);
+                throw;
             }
-
-            // Save changes to the database
-            await _context.SaveChangesAsync();
-
-            // Invalidate cache
-            _cache.Remove(CandidatesCacheKey);
-            _cache.Remove($"{CandidateCacheKeyPrefix}{candidate.Email}");
-
-            return candidate;
         }
 
         /// <summary>
@@ -81,8 +97,10 @@ namespace CandidateHubAPI.Services
         {
             if (!_cache.TryGetValue(CandidatesCacheKey, out List<Candidate> candidates))
             {
+                _logger.LogInformation("Cache miss for all candidates");
                 candidates = await _context.Candidates.ToListAsync();
                 _cache.Set(CandidatesCacheKey, candidates, TimeSpan.FromMinutes(30));
+                _logger.LogInformation("All candidates cached");
             }
 
             return _mapper.Map<List<CandidateDto>>(candidates);
