@@ -1,4 +1,5 @@
 using CandidateHubAPI.Data;
+using CandidateHubAPI.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,10 +7,14 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+
 // Configure DbContext with SQLite
 var connectionString = "Data Source=candidatehub.db";
 builder.Services.AddDbContext<CandidateDbContext>(options =>
     options.UseSqlite(connectionString));
+
+// Register the CandidateService
+builder.Services.AddScoped<ICandidateService, CandidateService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

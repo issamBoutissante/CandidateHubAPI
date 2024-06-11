@@ -1,15 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using CandidateHubAPI.Validators;
 
-namespace CandidateHubAPI.Models
+namespace CandidateHubAPI.Dtos
 {
-    [Index(nameof(Email),IsUnique = true)]
-    public class Candidate
+    public class CandidateDto
     {
-        public int Id { get; set; }
-
         [Required]
         public string FirstName { get; set; }
 
@@ -17,6 +11,7 @@ namespace CandidateHubAPI.Models
         public string LastName { get; set; }
 
         [Required]
+        [RegularExpression(@"^\+?[1-9]\d{1,14}$", ErrorMessage = "The phone number is not a valid international phone number.")]
         public string PhoneNumber { get; set; }
 
         [Required]
@@ -24,12 +19,14 @@ namespace CandidateHubAPI.Models
         public string Email { get; set; }
 
         public DateTimeOffset? CallTimeIntervalStart { get; set; }
+
+        [DateRange("CallTimeIntervalStart", ErrorMessage = "The end date must be greater than the start date.")]
         public DateTimeOffset? CallTimeIntervalEnd { get; set; }
 
-        [Url]
+        [LinkedInUrl]
         public string? LinkedInProfileUrl { get; set; }
 
-        [Url]
+        [GitHubUrl]
         public string? GitHubProfileUrl { get; set; }
 
         public string? Comment { get; set; }
